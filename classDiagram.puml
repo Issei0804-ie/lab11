@@ -1,0 +1,50 @@
+@startuml
+package "View"{
+    class Output
+    interface I_Formatter
+}
+
+package "Model"{
+    class Formatter
+    interface I_Input
+}
+
+package "Controller"{
+    class Input
+}
+
+class Output{
+    MakeDir()
+    OverWriteToFile()
+}
+
+class Formatter{
+    FormatDailyData() *time.Time
+    GetAveAfter() *time.Time
+    GetAvePreviousFile() *time.Time
+
+}
+
+interface I_Formatter{
+    GetData()[][]string
+}
+
+class Input{
+    ReadCSV()[][]string
+    readFile(filepath)*File
+    parseCSV()[][]string
+    removeHead(int n)
+}
+
+interface I_Input{
+    GetData()[][]string
+}
+
+Formatter ..> I_Input
+Input .|> I_Input
+
+Output ..> I_Formatter
+Formatter .|> I_Formatter
+
+@enduml
+

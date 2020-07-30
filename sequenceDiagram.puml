@@ -1,0 +1,37 @@
+@startuml
+participant OldFiles
+participant Controller
+participant Model
+participant View
+participant NewDir
+participant NewFiles
+
+
+Controller -> Controller : set config (filepath)
+loop number of files
+    alt exits file
+        Controller -> OldFiles : read file
+        Controller -> Controller : RemoveHead()
+        Controller -> Controller : ParseCSV
+    end
+end
+
+Controller -> Model : send data
+
+loop  daily_data in data
+    Model -> Model : FormatDailyData() *time.Time
+    alt Every 10 seconds data's ave == 0(データが存在しないとほぼ同値)
+        Model -> Model : GetAveAfter()
+        alt GetAveAfter() is err
+            Model -> Model :GetAvePreviousFile()
+        end
+    end
+end
+Model -> View : send data
+
+View -> View : set config (dir_name, filepath)
+View -> NewDir : MakeDir()
+View -> NewFiles : OverWriteData()
+
+
+@enduml
