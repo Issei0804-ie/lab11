@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 )
 
 type Input struct {
@@ -14,9 +15,30 @@ type Input struct {
 }
 
 func NewInput() *Input {
-	return &Input{
+	in := &Input{
 		conf: newConfig(),
 	}
+	in.Run()
+	return in
+}
+
+func (in *Input) Run(){
+	var YearMonth []string
+
+	for _, month := range in.conf.DirConf.Month{
+		YearMonth = append(YearMonth, strconv.Itoa(in.conf.DirConf.Year) + strconv.Itoa(month))
+	}
+}
+
+
+func (in *Input) GetYearMonth()[]string{
+	var YearMonth []string
+
+	for _, month := range in.conf.DirConf.Month{
+		// 0 padding
+		YearMonth = append(YearMonth, strconv.Itoa(in.conf.DirConf.Year) + fmt.Sprintf("%02d", month))
+	}
+	return YearMonth
 }
 
 //指定されたcsvファイルを読み取ります．
@@ -24,7 +46,8 @@ func (in *Input) ReadCSV(filepath string) [][]string {
 	f := in.readFile(filepath)
 	r := csv.NewReader(f)
 
-	if err := in.removeHead(2, r); err != nil {
+	row := 2
+	if err := in.removeHead(row, r); err != nil {
 		fmt.Println(err.Error())
 	}
 	return in.parseCSV(r)
@@ -57,7 +80,7 @@ func (in *Input) parseCSV(r *csv.Reader) [][]string {
 	return records
 }
 
-//読み込んだファイルの先頭2行を破棄します．
+//読み込んだファイルの先頭n行を破棄します．
 func (in *Input) removeHead(n int, r *csv.Reader) error {
 	for i := 0; i < 2; i++ {
 		_, err := r.Read()
@@ -73,30 +96,30 @@ func (in *Input) GetData() [][]string {
 }
 
 type config struct {
-	DirConf  dirConf
-	FileConf fileConf
+	DirConf  DirConf
+	FileConf FileConf
 }
 
 func newConfig() config {
 	return config{
-		DirConf:  dirConf{},
-		FileConf: fileConf{},
+		DirConf:  newDirConf(),
+		FileConf: newFileConf(),
 	}
 }
 
-type dirConf struct {
+type DirConf struct {
 	Year  int
 	Month []int
 }
 
-func newDirConf() dirConf {
-	return dirConf{
+func newDirConf() DirConf {
+	return DirConf{
 		Year:  2009,
 		Month: []int{6, 10, 11, 12},
 	}
 }
 
-func (dc *dirConf) EndOfTheMonthIs30(month int) bool {
+func (dc *DirConf) EndOfTheMonthIs30(month int) bool {
 	if month == 4 || month == 6 || month == 9 || month == 11 {
 		return true
 	} else {
@@ -104,12 +127,12 @@ func (dc *dirConf) EndOfTheMonthIs30(month int) bool {
 	}
 }
 
-func newFileConf() fileConf {
-	return fileConf{
-		filename: []string{"192.168.100.11_csv.log", "192.168.100.9_csv.log"},
+func newFileConf() FileConf {
+	return FileConf{
+		Filename: []string{"192.168.100.11_csv.log", "192.168.100.9_csv.log"},
 	}
 }
 
-type fileConf struct {
-	filename []string
+type FileConf struct {
+	Filename []string
 }

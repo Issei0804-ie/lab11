@@ -69,7 +69,7 @@ func Test_dirConf_EndOfTheMonthIs30(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dc := &dirConf{
+			dc := &DirConf{
 				Year:  tt.fields.Year,
 				Month: tt.fields.Month,
 			}
@@ -169,6 +169,39 @@ func TestInput_ReadCSV(t *testing.T) {
 			}
 			if got := in.ReadCSV(tt.args.filepath); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ReadCSV() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestInput_GetYearMonth(t *testing.T) {
+	type fields struct {
+		data [][]string
+		conf config
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   []string
+	}{
+		// TODO: Add test cases.
+		{
+			"GetYearMonth",
+			fields{
+				data: nil,
+				conf: newConfig(),
+			},
+			[]string{"200906", "200910", "200911", "200912"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			in := &Input{
+				data: tt.fields.data,
+				conf: tt.fields.conf,
+			}
+			if got := in.GetYearMonth(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetYearMonth() = %v, want %v", got, tt.want)
 			}
 		})
 	}
