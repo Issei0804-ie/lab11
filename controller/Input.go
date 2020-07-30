@@ -7,7 +7,7 @@ type Input struct {
 	conf config
 }
 
-func NewInput() *Input{
+func NewInput() *Input {
 	return &Input{}
 }
 
@@ -32,20 +32,40 @@ func (in *Input) GetData() [][]string {
 }
 
 type config struct {
-	DirConf dirConf
+	DirConf  dirConf
 	FileConf fileConf
 }
 
+func newConfig() config{
+	return config{
+		DirConf:  dirConf{},
+		FileConf: fileConf{},
+	}
+}
+
 type dirConf struct {
-	Year int
+	Year  int
 	Month []int
 }
 
-func (dc *dirConf) EndOfTheMonthIs30(month int) bool{
-	if month == 4 || month == 6 || month == 9 || month == 11{
+func newDirConf() dirConf{
+	return dirConf{
+		Year:  2009,
+		Month: []int{6,10,11,12},
+	}
+}
+
+func (dc *dirConf) EndOfTheMonthIs30(month int) bool {
+	if month == 4 || month == 6 || month == 9 || month == 11 {
 		return true
-	}else{
+	} else {
 		return false
+	}
+}
+
+func newFileConf() fileConf{
+	return fileConf{
+		filename: []string{"192.168.100.11_csv.log","192.168.100.9_csv.log"},
 	}
 }
 

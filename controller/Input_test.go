@@ -23,10 +23,10 @@ func Test_dirConf_EndOfTheMonthIs30(t *testing.T) {
 			name: "Jone",
 			fields: fields{
 				Year:  2009,
-				Month: []int{6,10,11,12},
+				Month: []int{6, 10, 11, 12},
 			},
 			args: args{
-				month:6,
+				month: 6,
 			},
 			want: true,
 		},
@@ -34,10 +34,10 @@ func Test_dirConf_EndOfTheMonthIs30(t *testing.T) {
 			name: "October",
 			fields: fields{
 				Year:  2009,
-				Month: []int{6,10,11,12},
+				Month: []int{6, 10, 11, 12},
 			},
 			args: args{
-				month:10,
+				month: 10,
 			},
 			want: false,
 		},
@@ -45,10 +45,10 @@ func Test_dirConf_EndOfTheMonthIs30(t *testing.T) {
 			name: "November",
 			fields: fields{
 				Year:  2009,
-				Month: []int{6,10,11,12},
+				Month: []int{6, 10, 11, 12},
 			},
 			args: args{
-				month:11,
+				month: 11,
 			},
 			want: true,
 		},
@@ -56,10 +56,10 @@ func Test_dirConf_EndOfTheMonthIs30(t *testing.T) {
 			name: "December",
 			fields: fields{
 				Year:  2009,
-				Month: []int{6,10,11,12},
+				Month: []int{6, 10, 11, 12},
 			},
 			args: args{
-				month:12,
+				month: 12,
 			},
 			want: false,
 		},
