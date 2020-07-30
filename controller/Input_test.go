@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/csv"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -125,6 +126,49 @@ func TestInput_removeHead(t *testing.T) {
 			}
 			if err := in.removeHead(tt.args.n, tt.args.r); (err != nil) != tt.wantErr {
 				t.Errorf("removeHead() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestInput_ReadCSV(t *testing.T) {
+	type fields struct {
+		data [][]string
+		conf config
+	}
+	type args struct {
+		filepath string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   [][]string
+	}{
+		// TODO: Add test cases.
+		{
+			"ReadCSVTEST",
+			fields{
+				data: nil,
+				conf: config{},
+			},
+			args{
+				filepath: "removeHeadTestData.csv",
+			},
+			[][]string{
+				{"Body", "Hoge"},
+				{"Body2", "Fuga"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			in := &Input{
+				data: tt.fields.data,
+				conf: tt.fields.conf,
+			}
+			if got := in.ReadCSV(tt.args.filepath); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ReadCSV() = %v, want %v", got, tt.want)
 			}
 		})
 	}

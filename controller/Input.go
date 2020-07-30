@@ -19,6 +19,7 @@ func NewInput() *Input {
 	}
 }
 
+//指定されたcsvファイルを読み取ります．
 func (in *Input) ReadCSV(filepath string) [][]string {
 	f := in.readFile(filepath)
 	r := csv.NewReader(f)
@@ -26,7 +27,6 @@ func (in *Input) ReadCSV(filepath string) [][]string {
 	if err := in.removeHead(2, r); err != nil {
 		fmt.Println(err.Error())
 	}
-
 	return in.parseCSV(r)
 }
 
@@ -46,8 +46,15 @@ func (in *Input) readFile(filepath string) *os.File {
 }
 
 func (in *Input) parseCSV(r *csv.Reader) [][]string {
-
-	return nil
+	var records [][]string
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		records = append(records, record)
+	}
+	return records
 }
 
 //読み込んだファイルの先頭2行を破棄します．
