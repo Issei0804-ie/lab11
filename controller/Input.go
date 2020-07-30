@@ -22,21 +22,34 @@ func NewInput() *Input {
 	return in
 }
 
-func (in *Input) Run(){
-	var YearMonth []string
+func (in *Input) Run() {
+	//yearMonth := in.GetYearMonth()
 
-	for _, month := range in.conf.DirConf.Month{
-		YearMonth = append(YearMonth, strconv.Itoa(in.conf.DirConf.Year) + strconv.Itoa(month))
-	}
 }
 
+func (in *Input) GetDirNames() [][]string {
+	var dirNames [][]string
+	yearMonth := in.GetYearMonth()
+	for j, month := range in.conf.DirConf.Month {
+		counter := 31
+		if in.conf.DirConf.EndOfTheMonthIs30(month) {
+			counter = 30
+		}
+		var dirName []string
+		for i := 1; i < counter+1; i++ {
+			dirName = append(dirName, yearMonth[j]+fmt.Sprintf("%02d", i))
+		}
+		dirNames = append(dirNames, dirName)
+	}
+	return dirNames
+}
 
-func (in *Input) GetYearMonth()[]string{
+func (in *Input) GetYearMonth() []string {
 	var YearMonth []string
 
-	for _, month := range in.conf.DirConf.Month{
+	for _, month := range in.conf.DirConf.Month {
 		// 0 padding
-		YearMonth = append(YearMonth, strconv.Itoa(in.conf.DirConf.Year) + fmt.Sprintf("%02d", month))
+		YearMonth = append(YearMonth, strconv.Itoa(in.conf.DirConf.Year)+fmt.Sprintf("%02d", month))
 	}
 	return YearMonth
 }
