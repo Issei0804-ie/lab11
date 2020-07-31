@@ -1,50 +1,77 @@
 @startuml
-package "View"{
-    class Output
-    interface I_Formatter
+
+package "Controller"{
+    class Formatter
+    class CSVController
 }
 
 package "Model"{
-    class Formatter
-    interface I_Input
+    class CSVReader
+    class Config
+    interface ImpConfig
+    interface ImpCSVReader
+
 }
 
-package "Controller"{
-    class Input
+package View{
+    class CSVWriter
+    interface ImpCSVWriter
 }
 
-class Output{
-    MakeDir()
-    OverWriteToFile()
+class Config{
+    year int
+    months []int
+    filename []string
+    EndOfTheMonthIs30(month int) bool
+}
+
+interface ImpConfig{
+    GetDirName()
+    GetFileName()
+}
+
+class CSVReader{
+    GetData() [][]string
+    ReadFile(filepath) *os.File
+    parseCSV ()[][]string
+    removeHead(int n, file *os.File)
+}
+
+interface ImpCSVReader{
+    GetData(filepath)[][]string
+
+}
+
+class CSVController{
+    Run()
 }
 
 class Formatter{
-    FormatDailyData() *time.Time
+    FormatData(*data)
+    GetAve() *time.Time
     GetAveAfter() *time.Time
     GetAvePreviousFile() *time.Time
+}
+
+class CSVWriter{
+    Write()
+}
+
+interface ImpCSVWriter{
+    OverWriteFile(filepath, data)
+    MakeDir(dirpath, dirname)
 
 }
 
-interface I_Formatter{
-    GetData()[][]string
-}
+CSVReader -|> ImpCSVReader
+Config -|> ImpConfig
 
-class Input{
-    ReadCSV()[][]string
-    readFile(filepath)*File
-    parseCSV()[][]string
-    removeHead(int n)
-}
+CSVController -> ImpConfig
+CSVController -> ImpCSVReader
+CSVController -> Formatter
+CSVController -> ImpCSVWriter
 
-interface I_Input{
-    GetData()[][]string
-}
-
-Formatter ..> I_Input
-Input .|> I_Input
-
-Output ..> I_Formatter
-Formatter .|> I_Formatter
+CSVWriter -|> ImpCSVWriter
 
 @enduml
 
