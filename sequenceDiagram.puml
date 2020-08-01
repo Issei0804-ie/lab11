@@ -1,6 +1,7 @@
 @startuml
 participant OldFile
 participant Controller
+participant Formatter
 participant Model
 participant View
 participant NewFile
@@ -15,7 +16,20 @@ loop number of files
     Controller -> Model : GetData(filepath)
     Model -> OldFile : Read()
     Model -> Model : ParseCSV
-    Controller -> Controller : FormatData()
+    Controller -> Formatter : FormatData(data []string)[]string
+
+    loop daily_data in data
+        Formatter -> Formatter : GetAve() *time.Time
+        alt err
+            Formatter -> Formatter : GetAveAfter() *time.Time
+            alt err
+                Formatter -> Formatter : GetAvePreviousFile() *time.Time
+            end
+        else
+            Formatter -> Formatter : SetAve(*time.Time)
+        end
+    end
+    Formatter -> Formatter : SetAvePreviousFile(time *time.Time)
     Controller -> View : OverWriteFile()
     View -> NewFile : Write()
 end

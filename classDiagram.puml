@@ -9,13 +9,13 @@ package "Model"{
     class CSVReader
     class Config
     interface ImpConfig
-    interface ImpCSVReader
+    interface ImpReader
 
 }
 
 package View{
     class CSVWriter
-    interface ImpCSVWriter
+    interface ImpWriter
 }
 
 class Config{
@@ -26,18 +26,18 @@ class Config{
 }
 
 interface ImpConfig{
-    GetDirName()
-    GetFileName()
+    GetDirName()[]string
+    GetFileName()[][]string
 }
 
 class CSVReader{
-    GetData() [][]string
+    GetData(filepath string)([][]string, error)
     ReadFile(filepath) *os.File
     parseCSV ()[][]string
-    removeHead(int n, file *os.File)
+    removeHead(n int, file *csv.Reader) error
 }
 
-interface ImpCSVReader{
+interface ImpReader{
     GetData(filepath)[][]string
 
 }
@@ -47,31 +47,35 @@ class CSVController{
 }
 
 class Formatter{
-    FormatData(*data)
+    Average *time.Time
+    AveragePreviousFile *time.Time
+    FormatData(data []string)[]string
     GetAve() *time.Time
     GetAveAfter() *time.Time
     GetAvePreviousFile() *time.Time
+    SetAve(time *time.Time)
+    SetAvePreviousFile(time *time.Time)
 }
 
 class CSVWriter{
     Write()
 }
 
-interface ImpCSVWriter{
+interface ImpWriter{
     OverWriteFile(filepath, data)
     MakeDir(dirpath, dirname)
 
 }
 
-CSVReader -|> ImpCSVReader
+CSVReader -|> ImpReader
 Config -|> ImpConfig
 
 CSVController -> ImpConfig
-CSVController -> ImpCSVReader
+CSVController -> ImpReader
 CSVController -> Formatter
-CSVController -> ImpCSVWriter
+CSVController -> ImpWriter
 
-CSVWriter -|> ImpCSVWriter
+CSVWriter -|> ImpWriter
 
 @enduml
 
