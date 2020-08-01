@@ -19,11 +19,11 @@ loop number of files
     Controller -> Formatter : FormatData(data []string)[]string
 
     loop daily_data in data
-        Formatter -> Formatter : GetAve() *time.Time
+        Formatter -> Formatter : GetAve(data [][]string, baseTime *time.Time)(*time.Time, error)
         alt err
-            Formatter -> Formatter : GetAveAfter() *time.Time
+            Formatter -> Formatter : GetAveAfter() (*time.Time,error)
             alt err
-                Formatter -> Formatter : GetAvePreviousFile() *time.Time
+                Formatter -> Formatter : GetAvePreviousFile() (*time.Time, error)
             end
         else
             Formatter -> Formatter : SetAve(*time.Time)
