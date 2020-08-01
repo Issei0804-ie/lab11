@@ -83,3 +83,43 @@ func TestCSVReader_parseCSV(t *testing.T) {
 		})
 	}
 }
+
+func TestCSVReader_GetData(t *testing.T) {
+	type args struct {
+		filepath string
+	}
+
+	file, _ := os.Open("test_answer.csv")
+
+	csvFile := csv.NewReader(file)
+	records, _ := csvFile.ReadAll()
+	tests := []struct {
+		name    string
+		args    args
+		want    [][]string
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "GetDataTest",
+			args: args{
+				filepath: "test.csv",
+			},
+			want:    records,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &CSVReader{}
+			got, err := c.GetData(tt.args.filepath)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetData() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetData() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

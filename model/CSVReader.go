@@ -11,6 +11,10 @@ import (
 type CSVReader struct {
 }
 
+func NewCSVReader() *CSVReader {
+	return &CSVReader{}
+}
+
 func (c *CSVReader) GetData(filepath string) ([][]string, error) {
 	f, err := c.ReadFile(filepath)
 	if err != nil {
