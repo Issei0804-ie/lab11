@@ -49,10 +49,10 @@ class CSVController{
 class Formatter{
     Average *time.Time
     AveragePreviousFile *time.Time
-    FormatData(data []string)[]string
-    GetAve() *time.Time
-    GetAveAfter() *time.Time
-    GetAvePreviousFile() *time.Time
+    FormatData(data [][]string)[][]string
+    GetAve(data [][]string, baseTime *time.Time)(*time.Time, error)
+    GetAveAfter() (*time.Time,error)
+    GetAvePreviousFile() (*time.Time, error)
     SetAve(time *time.Time)
     SetAvePreviousFile(time *time.Time)
 }
