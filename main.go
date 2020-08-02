@@ -1,11 +1,16 @@
 package main
 
-import "kadai11/parser"
+import (
+	"kadai11/controller"
+	"kadai11/model"
+	"kadai11/view"
+)
 
 func main() {
-	p, err := parser.NewParser("200906/20090601/192.168.100.11_csv.log")
-	if err != nil {
-		print(err.Error())
-	}
-	p.MergeRecords()
+	c := model.NewConfig()
+	r := model.NewCSVReader()
+	f := controller.NewFormatter()
+	w :=view.NewCSVWriter()
+	cont := controller.NewCSVController(c, *r, *f, w)
+	cont.Run()
 }

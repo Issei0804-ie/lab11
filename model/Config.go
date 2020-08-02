@@ -27,7 +27,7 @@ func (c *Config) EndOfTheMonthIs30(month int) bool {
 	}
 }
 
-func (c *Config) GetDirNames() ([]string, [][]string) {
+func (c *Config) GetDirsNames() ([]string, [][]string) {
 	var dirNames [][]string
 	yearMonth := c.GetYearMonth()
 	for j, month := range c.Month {

@@ -16,11 +16,11 @@ func TestFormatter_GetAve(t *testing.T) {
 		baseTime *time.Time
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    []string
-		wantErr bool
+		name   string
+		fields fields
+		args   args
+		want   []string
+		want2  int
 	}{
 		// TODO: Add test cases.
 		{
@@ -36,7 +36,8 @@ func TestFormatter_GetAve(t *testing.T) {
 				},
 				baseTime: testFuncDataTime("00:00:00"),
 			},
-			want: []string{"00:00:00", "-6"},
+			want:  []string{"00:00:00", "-6"},
+			want2: 2,
 		},
 		{
 			name:   "overflow data",
@@ -51,40 +52,40 @@ func TestFormatter_GetAve(t *testing.T) {
 				},
 				baseTime: testFuncDataTime("00:00:00"),
 			},
-			want:    []string{"00:00:00", "-8"},
-			wantErr: false,
+			want:  []string{"00:00:00", "-8"},
+			want2: 4,
 		},
 		{
-			name:    "NoAveData",
-			fields:  fields{
-				Average: -5,
+			name: "NoAveData",
+			fields: fields{
+				Average:             -5,
 				AveragePreviousFile: 0,
 			},
-			args:    args{
-				data:    [][]string{
-			{"00:01:02", "-5"},
-			{"00:01:05", "-7"},
-			{"00:01:07", "-8"},
-			{"00:01:08", "-12"},
-			{"00:01:12", "-7"},
-			},
+			args: args{
+				data: [][]string{
+					{"00:01:02", "-5"},
+					{"00:01:05", "-7"},
+					{"00:01:07", "-8"},
+					{"00:01:08", "-12"},
+					{"00:01:12", "-7"},
+				},
 				baseTime: testFuncDataTime("00:00:00"),
 			},
-			want:    nil,
-			wantErr: true,
+			want:  nil,
+			want2: 0,
 		},
 		{
-			name:    "NoData",
-			fields:  fields{
+			name: "NoData",
+			fields: fields{
 				Average:             0,
 				AveragePreviousFile: -4,
 			},
-			args:    args{
+			args: args{
 				data:     [][]string{},
 				baseTime: testFuncDataTime("00:00:00"),
 			},
-			want:    nil,
-			wantErr: true,
+			want:  nil,
+			want2: 0,
 		},
 		{
 			name: "usually data",
@@ -93,7 +94,7 @@ func TestFormatter_GetAve(t *testing.T) {
 				AveragePreviousFile: 0,
 			},
 			args: args{
-				data:    [][]string{
+				data: [][]string{
 					{"00:01:02", "-5"},
 					{"00:01:05", "-7"},
 					{"00:01:07", "-8"},
@@ -102,8 +103,8 @@ func TestFormatter_GetAve(t *testing.T) {
 				},
 				baseTime: testFuncDataTime("00:01:00"),
 			},
-			want:    []string{"00:01:00", "-8"},
-			wantErr: false,
+			want:  []string{"00:01:00", "-8"},
+			want2: 4,
 		},
 	}
 
@@ -113,14 +114,13 @@ func TestFormatter_GetAve(t *testing.T) {
 				Average:             tt.fields.Average,
 				AveragePreviousFile: tt.fields.AveragePreviousFile,
 			}
-			got, err := f.GetAve(tt.args.data, tt.args.baseTime)
+			got, got2 := f.GetAve(tt.args.data, tt.args.baseTime)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetAve() got = %v, want %v", got, tt.want)
 			}
 
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetAve() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			if !reflect.DeepEqual(got2, tt.want2) {
+				t.Errorf("GetAve() got2 = %v, want2 %v", got2, tt.want2)
 			}
 		})
 	}
@@ -130,3 +130,134 @@ func testFuncDataTime(date string) *time.Time {
 	t, _ := time.Parse("15:04:05", date)
 	return &t
 }
+
+func TestFormatter_GetAveAfter(t *testing.T) {
+	type fields struct {
+		Average             int
+		AveragePreviousFile int
+	}
+	type args struct {
+		baseTime *time.Time
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   []string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "usually test",
+			fields: fields{
+				Average:             -54,
+				AveragePreviousFile: 0,
+			},
+			args: args{
+				baseTime: testFuncDataTime("00:00:00"),
+			},
+			want: []string{"00:00:00", "-54"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Formatter{
+				Average:             tt.fields.Average,
+				AveragePreviousFile: tt.fields.AveragePreviousFile,
+			}
+			if got := f.GetAveAfter(tt.args.baseTime); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetAveAfter() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFormatter_GetAvePreviousFile(t *testing.T) {
+	type fields struct {
+		Average             int
+		AveragePreviousFile int
+	}
+	type args struct {
+		baseTime *time.Time
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   []string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "usually test",
+			fields: fields{
+				Average:             0,
+				AveragePreviousFile: -34,
+			},
+			args: args{
+				baseTime: testFuncDataTime("00:00:00"),
+			},
+			want: []string{"00:00:00", "-34"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Formatter{
+				Average:             tt.fields.Average,
+				AveragePreviousFile: tt.fields.AveragePreviousFile,
+			}
+			if got := f.GetAvePreviousFile(tt.args.baseTime); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetAvePreviousFile() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+/*
+func TestFormatter_FormatData(t *testing.T) {
+	type fields struct {
+		Average             int
+		AveragePreviousFile int
+	}
+	type args struct {
+		data [][]string
+	}
+
+	f, err := os.Open("test.csv")
+	if err != nil {
+		t.Errorf("test.csv not found")
+	}
+	defer f.Close()
+	r := csv.NewReader(f)
+	alldata, err := r.ReadAll()
+
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   [][]string
+	}{
+		// TODO: Add test cases.
+		{
+			name:   "test.csv",
+			fields: fields{
+				Average:             0,
+				AveragePreviousFile: 0,
+			},
+			args:   args{
+				data: alldata,
+			},
+			want:   nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := &Formatter{
+				Average:             tt.fields.Average,
+				AveragePreviousFile: tt.fields.AveragePreviousFile,
+			}
+			if got := f.FormatData(tt.args.data); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FormatData() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+*/

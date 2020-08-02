@@ -42,7 +42,7 @@ func TestConfig_GetDirsName(t *testing.T) {
 				Month:    tt.fields.Month,
 				Filename: tt.fields.Filename,
 			}
-			got, got1 := c.GetDirNames()
+			got, got1 := c.GetDirsNames()
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("GetDirNames() got = %v, want %v", got, tt.want)
 			}

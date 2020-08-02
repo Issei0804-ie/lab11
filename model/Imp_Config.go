@@ -1,6 +1,6 @@
 package model
 
 type ImpConfig interface {
-	GetDirsName() [][]string
+	GetDirsNames() ([]string, [][]string)
 	GetFilesName() []string
 }

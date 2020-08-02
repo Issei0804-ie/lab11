@@ -1,5 +1,5 @@
 package model
 
 type ImpReader interface {
-	GetData(filepath string) [][]string
+	GetData(string) ([][]string, error)
 }

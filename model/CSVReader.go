@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"os"
 )
 
@@ -15,8 +16,10 @@ func NewCSVReader() *CSVReader {
 	return &CSVReader{}
 }
 
-func (c *CSVReader) GetData(filepath string) ([][]string, error) {
+func (c CSVReader) GetData(filepath string) ([][]string, error) {
+	log.Println("ReadFile....")
 	f, err := c.ReadFile(filepath)
+	log.Println("Finish")
 	if err != nil {
 		return nil, err
 	}
@@ -26,6 +29,9 @@ func (c *CSVReader) GetData(filepath string) ([][]string, error) {
 	if err := c.removeHead(row, r); err != nil {
 		fmt.Println(err.Error())
 	}
+
+	log.Println("ParseToCSV....")
+	defer log.Println("Finish")
 	return c.parseCSV(r), nil
 }
 
