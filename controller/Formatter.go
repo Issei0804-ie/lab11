@@ -52,13 +52,23 @@ func (f *Formatter) FormatData(data [][]string) [][]string {
 func (f *Formatter) GetAve(data [][]string, baseTime *time.Time) ([]string, int) {
 	ave := 0
 	i := 0
+	errNumber := 0
 	subTime := baseTime.Add(time.Second * 10)
 	for i = 0; i < len(data); i++ {
 		tmp := f.timeToSeconds(subTime) - f.timeToSeconds(f.dataToTime(data[i][TIME]))
 		if 1 <= tmp && tmp <= 10 {
-			n, err := strconv.Atoi(data[i][RXLEVEL])
+			var n int
+			var err error
+			//RXLEVELが存在しない場合
+			if len(data[i]) == 1 {
+				n = f.Average
+				err = nil
+			} else {
+				n, err = strconv.Atoi(data[i][RXLEVEL])
+			}
 			if err != nil {
-				panic(err.Error())
+				n = 0
+				errNumber++
 			}
 			ave += n
 		} else {
@@ -68,8 +78,8 @@ func (f *Formatter) GetAve(data [][]string, baseTime *time.Time) ([]string, int)
 	if ave == 0 {
 		return nil, 0
 	}
-	records := []string{f.timeToData(*baseTime), strconv.Itoa(ave / i)}
-	f.Average = ave / i
+	records := []string{f.timeToData(*baseTime), strconv.Itoa(ave/i - errNumber)}
+	f.SetAve(ave / i)
 	return records, i
 }
 

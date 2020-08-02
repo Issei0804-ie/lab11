@@ -3,13 +3,14 @@ package controller
 import (
 	"kadai11/model"
 	"kadai11/view"
+	"log"
 )
 
 type CSVController struct {
 	config    model.ImpConfig
 	reader    model.ImpReader
 	formatter Formatter
-	writer view.ImpWriter
+	writer    view.ImpWriter
 }
 
 func NewCSVController(config model.ImpConfig, reader model.CSVReader, formatter Formatter, writer view.ImpWriter) *CSVController {
@@ -17,18 +18,27 @@ func NewCSVController(config model.ImpConfig, reader model.CSVReader, formatter 
 		config:    config,
 		reader:    reader,
 		formatter: formatter,
-		writer: writer,
+		writer:    writer,
 	}
 }
 
 func (c *CSVController) Run() {
-	a, b :=c.config.GetDirsNames()
+	rootDirs, inDirs := c.config.GetDirsNames()
 	filenames := c.config.GetFilesName()
 
-	h, _ :=c.reader.GetData("RxData/"+a[0] + "/" +b[0][0] + "/" + filenames[0])
-	fomattedData :=c.formatter.FormatData(h)
+	c.writer.MakeDir("MyData")
+	for i, dir := range rootDirs {
+		c.writer.MakeDir("MyData/" + dir)
+		for j := 0; j < len(inDirs[i]); j++ {
+			c.writer.MakeDir("MyData/" + dir + "/" + inDirs[i][j])
+			for _, filename := range filenames {
+				log.Println("GetData:" + "RxData/" + dir + "/" + inDirs[i][j] + "/" + filename)
+				h, _ := c.reader.GetData("RxData/" + dir + "/" + inDirs[i][j] + "/" + filename)
+				fomattedData := c.formatter.FormatData(h)
+				log.Println("WriteData:" + "MyData/" + dir + "/" + inDirs[i][j] + "/" + filename)
+				c.writer.OverWriteFile("MyData/"+dir+"/"+inDirs[i][j]+"/"+filename, fomattedData)
+			}
+		}
+	}
 
-	c.writer.MakeDir("MyData/" + a[0])
-	c.writer.MakeDir("MyData/" + a[0] + "/" +b[0][0])
-	c.writer.OverWriteFile("MyData/"+a[0] + "/" +b[0][0] + "/" + filenames[0], fomattedData)
 }
