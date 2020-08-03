@@ -8,7 +8,7 @@ import (
 type CSVWriter struct {
 }
 
-func NewCSVWriter() *CSVWriter{
+func NewCSVWriter() *CSVWriter {
 	return &CSVWriter{}
 }
 
@@ -24,7 +24,7 @@ func (c CSVWriter) OverWriteFile(filepath string, data [][]string) {
 func (c CSVWriter) MakeDir(dirpath string) {
 	if !c.CheckExistsDir(dirpath) {
 		err := os.Mkdir(dirpath, 0777)
-		if err != nil{
+		if err != nil {
 			panic(err.Error())
 		}
 	}
@@ -32,7 +32,7 @@ func (c CSVWriter) MakeDir(dirpath string) {
 
 func (c CSVWriter) CheckExistsDir(dirpath string) bool {
 	_, err := os.Stat(dirpath)
-	if err != nil{
+	if err != nil {
 		return false
 	}
 	return true

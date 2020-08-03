@@ -20,6 +20,12 @@ func NewFormatter() *Formatter {
 }
 
 func (f *Formatter) FormatData(data [][]string) [][]string {
+
+	// 12時間以上空いているか確認
+	if len(data) < 21600 {
+		return f.setDataFineWeather()
+	}
+
 	baseTime := f.dataToTime("00:00:00")
 	sliceCount := 0
 	var records [][]string
@@ -54,6 +60,7 @@ func (f *Formatter) GetAve(data [][]string, baseTime *time.Time) ([]string, int)
 	i := 0
 	errNumber := 0
 	subTime := baseTime.Add(time.Second * 10)
+
 	for i = 0; i < len(data); i++ {
 		tmp := f.timeToSeconds(subTime) - f.timeToSeconds(f.dataToTime(data[i][TIME]))
 		if 1 <= tmp && tmp <= 10 {
@@ -110,4 +117,18 @@ func (f *Formatter) timeToData(t time.Time) string {
 
 func (f *Formatter) timeToSeconds(t time.Time) int {
 	return (t.Hour() * 60 * 60) + (t.Minute() * 60) + t.Second()
+}
+
+func (f *Formatter) setDataFineWeather() (records [][]string) {
+	baseTime := f.dataToTime("00:00:00")
+
+	for {
+		record := []string{f.timeToData(baseTime), "0"}
+		baseTime = baseTime.Add(time.Second * 10)
+		records = append(records, record)
+		if baseTime == f.dataToTime("23:50:50") {
+			break
+		}
+	}
+	return
 }
